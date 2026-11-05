@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/generated",
+	"textures": {
+		"layer0": "valor_weapons:item/fist_of_thunderlord"
+	}
+}

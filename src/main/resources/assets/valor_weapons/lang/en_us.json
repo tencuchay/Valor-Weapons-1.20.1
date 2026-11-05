@@ -1,0 +1,18 @@
+{
+	"item.valor_weapons.thunder_lord_fist": "Thunder Lord's Fist",
+	"itemGroup.valor_weapons": "Valor Weapons",
+	"entity.valor_weapons.thunder_bolt": "Thunder Bolt",
+	"tooltip.valor_weapons.thunder_lord_fist.scaling": "Scales with %s Attack Damage and %s Magic Damage",
+	"tooltip.valor_weapons.thunder_lord_fist.melee": "Close range: strikes with magic damage",
+	"tooltip.valor_weapons.thunder_lord_fist.ranged": "Far away: fires a homing thunderbolt",
+	"entity.valor_weapons.lightning_strike": "Lightning Strike",
+	"tooltip.valor_weapons.thunder_lord_fist.skill": "Attack #%s: 3 lightning strikes forward (%s Attack + %s Magic Damage), heals %s of Magic Damage per strike",
+	"key.categories.valor_weapons": "Valor Weapons",
+	"key.valor_weapons.thunderstep": "Thunderstep",
+	"key.valor_weapons.thunderstep_upgrade": "Upgrade Thunderstep",
+	"message.valor_weapons.thunderstep.upgraded": "Thunderstep upgraded to level %s",
+	"message.valor_weapons.thunderstep.need_xp": "You need %s experience levels to upgrade Thunderstep",
+	"message.valor_weapons.thunderstep.max": "Thunderstep is already at max level",
+	"message.valor_weapons.thunderstep.empowered": "Thunderstep: your next attack is a Lightning Strike",
+	"message.valor_weapons.thunderstep.locked": "Thunderstep is not learned yet: press %s to upgrade it"
+}

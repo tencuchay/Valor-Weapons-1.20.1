@@ -1,0 +1,12 @@
+{
+	"loader": "forge:separate_transforms",
+	"gui_light": "front",
+	"base": {
+		"parent": "valor_weapons:item/thunder_fist"
+	},
+	"perspectives": {
+		"gui": {
+			"parent": "valor_weapons:item/thunder_lord_fist_icon"
+		}
+	}
+}

@@ -1,0 +1,18 @@
+{
+	"item.valor_weapons.thunder_lord_fist": "Thiên Lôi Chưởng",
+	"itemGroup.valor_weapons": "Vũ Khí Valor",
+	"entity.valor_weapons.thunder_bolt": "Tia Sét",
+	"tooltip.valor_weapons.thunder_lord_fist.scaling": "Scale theo %s Công Vật Lý và %s Công Phép",
+	"tooltip.valor_weapons.thunder_lord_fist.melee": "Đánh gần: gây sát thương phép",
+	"tooltip.valor_weapons.thunder_lord_fist.ranged": "Đánh xa: bắn tia sét tự đuổi theo mục tiêu",
+	"entity.valor_weapons.lightning_strike": "Sấm Sét",
+	"tooltip.valor_weapons.thunder_lord_fist.skill": "Đòn đánh thứ %s: 3 tia sét về phía trước (%s Công Vật Lý + %s Công Phép), mỗi tia hồi %s Công Phép",
+	"key.categories.valor_weapons": "Vũ Khí Valor",
+	"key.valor_weapons.thunderstep": "Thiên Lôi Bộ",
+	"key.valor_weapons.thunderstep_upgrade": "Nâng cấp Thiên Lôi Bộ",
+	"message.valor_weapons.thunderstep.upgraded": "Thiên Lôi Bộ đã lên cấp %s",
+	"message.valor_weapons.thunderstep.need_xp": "Cần %s cấp kinh nghiệm để nâng cấp Thiên Lôi Bộ",
+	"message.valor_weapons.thunderstep.max": "Thiên Lôi Bộ đã đạt cấp tối đa",
+	"message.valor_weapons.thunderstep.empowered": "Thiên Lôi Bộ: đòn đánh tiếp theo sẽ giáng sấm sét",
+	"message.valor_weapons.thunderstep.locked": "Thiên Lôi Bộ chưa được học: bấm %s để nâng cấp"
+}
