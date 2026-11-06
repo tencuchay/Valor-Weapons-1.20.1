@@ -94,9 +94,58 @@ public final class ThunderstepSkill {
         }
     }
 
+    private static final class PassiveState {
+        int stacks = 0;
+        boolean hasFreeCast = false;
+        long savedCooldownRemaining = 0;
+        long lastStackTick = -1000;
+    }
+
     private static final Map<UUID, Dash> DASHES = new HashMap<>();
     private static final Map<UUID, Long> COOLDOWN_END = new HashMap<>();
     private static final Map<UUID, ShieldState> SHIELDS = new HashMap<>();
+    private static final Map<UUID, PassiveState> PASSIVES = new HashMap<>();
+
+    public static final int MAX_PASSIVE_STACKS = 6;
+
+    private static PassiveState passive(ServerPlayer player) {
+        return PASSIVES.computeIfAbsent(player.getUUID(), id -> new PassiveState());
+    }
+
+    /** Called when an attack hits an enemy with the weapon. Grants 1 passive mark, up to 6 for a free cast. */
+    public static void addStack(ServerPlayer player) {
+        if (!holdingFist(player) || !player.isAlive()) {
+            return;
+        }
+        long now = player.level().getGameTime();
+        PassiveState p = passive(player);
+        if (p.lastStackTick == now) {
+            return; // 1 stack per attack action tick
+        }
+        p.lastStackTick = now;
+
+        if (p.hasFreeCast) {
+            return; // Already ready
+        }
+
+        p.stacks++;
+        if (p.stacks >= MAX_PASSIVE_STACKS) {
+            p.stacks = MAX_PASSIVE_STACKS;
+            p.hasFreeCast = true;
+
+            long cdEnd = COOLDOWN_END.getOrDefault(player.getUUID(), 0L);
+            if (cdEnd > now) {
+                p.savedCooldownRemaining = cdEnd - now;
+            } else {
+                p.savedCooldownRemaining = 0;
+            }
+
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.5F, 1.8F);
+            player.displayClientMessage(Component.translatable("message.valor_weapons.thunderstep.free_ready"), true);
+        }
+        sync(player);
+    }
 
     private ThunderstepSkill() {}
 
@@ -166,11 +215,24 @@ public final class ThunderstepSkill {
         }
         int level = getLevel(player);
         long now = player.level().getGameTime();
-        if (COOLDOWN_END.getOrDefault(player.getUUID(), 0L) > now) {
-            return;
-        }
+        PassiveState p = passive(player);
 
-        COOLDOWN_END.put(player.getUUID(), now + COOLDOWN_TICKS);
+        boolean isFree = p.hasFreeCast;
+        if (!isFree) {
+            if (COOLDOWN_END.getOrDefault(player.getUUID(), 0L) > now) {
+                return;
+            }
+            COOLDOWN_END.put(player.getUUID(), now + COOLDOWN_TICKS);
+        } else {
+            p.hasFreeCast = false;
+            p.stacks = 0;
+            if (p.savedCooldownRemaining > 0) {
+                COOLDOWN_END.put(player.getUUID(), now + p.savedCooldownRemaining);
+                p.savedCooldownRemaining = 0;
+            } else {
+                COOLDOWN_END.put(player.getUUID(), 0L);
+            }
+        }
 
         double shield = SHIELD[level - 1] + player.getMaxHealth() * SHIELD_MAX_HEALTH_FRACTION;
         applyShield(player, shield, now);
@@ -296,9 +358,15 @@ public final class ThunderstepSkill {
 
     public static void sync(ServerPlayer player) {
         long now = player.level().getGameTime();
-        int remaining = (int) Math.max(0L, COOLDOWN_END.getOrDefault(player.getUUID(), 0L) - now);
+        PassiveState p = passive(player);
+        int remaining;
+        if (p.hasFreeCast) {
+            remaining = 0; // ready on client
+        } else {
+            remaining = (int) Math.max(0L, COOLDOWN_END.getOrDefault(player.getUUID(), 0L) - now);
+        }
         ModNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
-                new SkillSyncMessage(getLevel(player), remaining, COOLDOWN_TICKS));
+                new SkillSyncMessage(getLevel(player), remaining, COOLDOWN_TICKS, p.stacks, p.hasFreeCast));
     }
 
     @SubscribeEvent
@@ -363,6 +431,8 @@ public final class ThunderstepSkill {
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             clearShield(player);
+            PASSIVES.remove(player.getUUID());
+            COOLDOWN_END.remove(player.getUUID());
         }
         DASHES.remove(event.getEntity().getUUID());
     }

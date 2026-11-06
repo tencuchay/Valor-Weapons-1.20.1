@@ -18,8 +18,9 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -36,22 +37,22 @@ import java.util.UUID;
  *   which lands in onLeftClickEntity below.
  * - Otherwise a swing fires one homing thunder bolt (see FistCombat).
  */
-public class ThunderLordFistItem extends Item {
+public class ThunderLordFistItem extends SwordItem {
     /**
      * Attack damage the weapon grants. Vanilla tooltips add the player's base 1.0 to the main-hand weapon modifier,
-     * so 29 is shown as "30 Attack Damage". (Use 30 here if you want the weapon to give a full +30 on top of the base.)
+     * so 32 is shown as "33 Attack Damage".
      */
-    private static final double WEAPON_ATTACK_DAMAGE = 29.0D;
+    private static final double WEAPON_ATTACK_DAMAGE = 32.0D;
     /** Magic damage (valor_items:magic_damage) the weapon grants while held in the main hand. */
     private static final double WEAPON_MAGIC_DAMAGE = 15.0D;
     /** Wanted total attack speed. */
-    private static final double TOTAL_ATTACK_SPEED = 1.8D;
-    /** The player's base attack speed is 4.0, so the modifier is (wanted - 4.0) = -2.2. */
+    private static final double TOTAL_ATTACK_SPEED = 1.3D;
+    /** The player's base attack speed is 4.0, so the modifier is (wanted - 4.0) = -2.7. */
     private static final double WEAPON_ATTACK_SPEED = TOTAL_ATTACK_SPEED - 4.0D;
     private static final UUID MAGIC_DAMAGE_MODIFIER_UUID = UUID.fromString("5c1f8f0e-3b7a-4d5e-9a64-2f7d8b1c0a15");
 
     public ThunderLordFistItem(Properties properties) {
-        super(properties);
+        super(Tiers.NETHERITE, (int) (WEAPON_ATTACK_DAMAGE - Tiers.NETHERITE.getAttackDamageBonus()), (float) WEAPON_ATTACK_SPEED, properties);
     }
 
     @Override
@@ -101,6 +102,10 @@ public class ThunderLordFistItem extends Item {
         if (damage > 0.0F) {
             DamageSource source = player.level().damageSources().indirectMagic(player, player);
             target.hurt(source, damage);
+
+            if (player instanceof ServerPlayer serverPlayer) {
+                com.valor.weapons.combat.ThunderstepSkill.addStack(serverPlayer);
+            }
 
             if (player.level() instanceof ServerLevel level) {
                 level.playSound(null, target.getX(), target.getY(), target.getZ(),

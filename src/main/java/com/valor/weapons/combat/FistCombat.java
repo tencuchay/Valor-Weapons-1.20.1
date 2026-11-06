@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
@@ -73,6 +74,7 @@ public final class FistCombat {
         int pendingWait = 0;
         long lastAttackTick = -1000; // start tick of the previous swing
         long lastMeleeTick = -1000;
+        long lastBlockClickTick = -1000;
         boolean meleeSkillSwing = false;
         long empoweredUntil = -1; // Thunderstep: the next attack before this tick is a Lightning Strike
         int swingCount = 0;
@@ -101,8 +103,8 @@ public final class FistCombat {
         }
         State s = state(player);
         long now = player.level().getGameTime();
-        if (s.pendingTick >= 0) {
-            return; // already waiting on this swing
+        if (s.pendingTick >= 0 || now == s.lastBlockClickTick) {
+            return; // already waiting on this swing or clicking a block
         }
         // One tick of slack so rounding never makes us skip a swing Better Combat does perform.
         if (now - s.lastAttackTick < cooldownTicks(player) - 1.0D) {
@@ -114,7 +116,7 @@ public final class FistCombat {
 
     /**
      * Called by the item for every target a melee swing hits (Better Combat sweeps several targets in one tick).
-     * The swing is only counted once. That swing is spent: no bolt for it.
+     * The swing is only counted once.
      *
      * @return true if this is the skill swing: the lightning is cast and the item must NOT deal its normal damage.
      */
@@ -127,11 +129,17 @@ public final class FistCombat {
         s.lastMeleeTick = now;
         // Keep the cadence anchored to when the swing STARTED, not when it landed.
         s.lastAttackTick = s.pendingTick >= 0 ? s.pendingTick : now - (swingWaitTicks(player) - 1);
+        s.pendingTick = -1;
 
         SwingKind kind = countSwing(s, now);
         s.meleeSkillSwing = kind != SwingKind.NORMAL;
         if (s.meleeSkillSwing) {
             castLightning(player, kind == SwingKind.EMPOWERED);
+        } else {
+            float damage = ValorDamage.thunderFistDamage(player);
+            if (damage > 0.0F) {
+                fireBolt(player, damage);
+            }
         }
         return s.meleeSkillSwing;
     }
@@ -200,6 +208,15 @@ public final class FistCombat {
     @SubscribeEvent
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         STATES.remove(event.getEntity().getUUID());
+    }
+
+    @SubscribeEvent
+    public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            State s = state(player);
+            s.pendingTick = -1;
+            s.lastBlockClickTick = player.level().getGameTime();
+        }
     }
 
     /** 3 lightning strikes in a straight line along the (horizontal) look direction, one after another. */

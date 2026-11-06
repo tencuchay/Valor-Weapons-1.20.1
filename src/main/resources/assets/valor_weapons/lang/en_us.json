@@ -14,6 +14,7 @@
 	"message.valor_weapons.thunderstep.need_xp": "You need %s experience levels to upgrade Thunderstep",
 	"message.valor_weapons.thunderstep.max": "Thunderstep is already at max level",
 	"message.valor_weapons.thunderstep.empowered": "Thunderstep: your next attack is a Lightning Strike",
+	"message.valor_weapons.thunderstep.free_ready": "Thunderstep: 6 marks collected! Free cast available",
 	"message.valor_weapons.thunderstep.locked": "Thunderstep is not learned yet: press %s to upgrade it",
 	"skill.valor_weapons.thunderstep.name": "Thunderstep",
 	"screen.valor_weapons.thunderstep.slot": "Active skill",

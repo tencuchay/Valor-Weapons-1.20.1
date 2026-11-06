@@ -6,13 +6,17 @@ public final class ClientSkillData {
     public static long clientTicks = 0;
 
     public static int level = 1;
+    public static int stacks = 0;
+    public static boolean hasFreeCast = false;
     private static long cooldownEndTick = 0;
     private static int cooldownTotal = 1;
 
     private ClientSkillData() {}
 
-    public static void update(int newLevel, int cooldownRemaining, int newCooldownTotal) {
+    public static void update(int newLevel, int cooldownRemaining, int newCooldownTotal, int newStacks, boolean freeCast) {
         level = newLevel;
+        stacks = newStacks;
+        hasFreeCast = freeCast;
         cooldownTotal = Math.max(1, newCooldownTotal);
         cooldownEndTick = clientTicks + cooldownRemaining;
     }

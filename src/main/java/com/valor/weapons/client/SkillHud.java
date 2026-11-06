@@ -72,14 +72,27 @@ public final class SkillHud {
         g.blit(frameTexture(level), x, y, 0, 0, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE);
         g.blit(ICON, iconX, iconY, 0, 0, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
 
-        // Cooldown: darkens the icon from the top, shrinking as the cooldown runs out.
-        float fraction = ClientSkillData.remainingFraction(partialTick);
-        if (fraction > 0.0F) {
-            int covered = Math.round(ICON_SIZE * fraction);
-            g.fill(iconX, iconY, iconX + ICON_SIZE, iconY + covered, 0xB0101010);
-            float seconds = ClientSkillData.remainingTicks(partialTick) / 20.0F;
-            String text = seconds >= 10.0F ? String.valueOf((int) Math.ceil(seconds)) : String.format("%.1f", seconds);
-            g.drawCenteredString(font, text, x + FRAME_SIZE / 2, y + FRAME_SIZE / 2 - 4, 0xFFFFFF);
+        // Passive stacks & Free cast indicator
+        if (ClientSkillData.hasFreeCast) {
+            g.drawCenteredString(font, "⚡ FREE", x + FRAME_SIZE / 2, y - 10, 0xFFFF55);
+            // Golden highlight border when free cast is available
+            g.fill(x - 1, y - 1, x + FRAME_SIZE + 1, y, 0xFFF5B83D);
+            g.fill(x - 1, y + FRAME_SIZE, x + FRAME_SIZE + 1, y + FRAME_SIZE + 1, 0xFFF5B83D);
+            g.fill(x - 1, y, x, y + FRAME_SIZE, 0xFFF5B83D);
+            g.fill(x + FRAME_SIZE, y, x + FRAME_SIZE + 1, y + FRAME_SIZE, 0xFFF5B83D);
+        } else {
+            if (ClientSkillData.stacks > 0) {
+                g.drawCenteredString(font, "⚡ " + ClientSkillData.stacks + "/6", x + FRAME_SIZE / 2, y - 10, 0x55FFFF);
+            }
+            // Cooldown: darkens the icon from the top, shrinking as the cooldown runs out.
+            float fraction = ClientSkillData.remainingFraction(partialTick);
+            if (fraction > 0.0F) {
+                int covered = Math.round(ICON_SIZE * fraction);
+                g.fill(iconX, iconY, iconX + ICON_SIZE, iconY + covered, 0xB0101010);
+                float seconds = ClientSkillData.remainingTicks(partialTick) / 20.0F;
+                String text = seconds >= 10.0F ? String.valueOf((int) Math.ceil(seconds)) : String.format("%.1f", seconds);
+                g.drawCenteredString(font, text, x + FRAME_SIZE / 2, y + FRAME_SIZE / 2 - 4, 0xFFFFFF);
+            }
         }
 
         String label = "[" + ModKeys.THUNDERSTEP.getTranslatedKeyMessage().getString() + "]  Lv." + level;

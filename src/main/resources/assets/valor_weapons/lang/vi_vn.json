@@ -14,6 +14,7 @@
 	"message.valor_weapons.thunderstep.need_xp": "Cần %s cấp kinh nghiệm để nâng cấp Thiên Lôi Bộ",
 	"message.valor_weapons.thunderstep.max": "Thiên Lôi Bộ đã đạt cấp tối đa",
 	"message.valor_weapons.thunderstep.empowered": "Thiên Lôi Bộ: đòn đánh tiếp theo sẽ giáng sấm sét",
+	"message.valor_weapons.thunderstep.free_ready": "Thiên Lôi Bộ: Đã đủ 6 dấu ấn! Nhận 1 lần dùng chiêu miễn phí",
 	"message.valor_weapons.thunderstep.locked": "Thiên Lôi Bộ chưa được học: bấm %s để nâng cấp",
 	"skill.valor_weapons.thunderstep.name": "Thiên Lôi Bộ",
 	"screen.valor_weapons.thunderstep.slot": "Kỹ năng chủ động",

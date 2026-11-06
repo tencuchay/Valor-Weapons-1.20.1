@@ -35,6 +35,12 @@ public final class ClientInputHandler {
         // Every tick while held, so a swing is picked up on the exact tick it becomes possible.
         // The server decides whether it counts (attack-speed cooldown), so this cannot be used to fire faster.
         if (down) {
+            if (mc.gameMode != null && mc.gameMode.isDestroying()) {
+                return;
+            }
+            if (mc.hitResult != null && mc.hitResult.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK) {
+                return;
+            }
             ModNetwork.CHANNEL.sendToServer(new FistSwingMessage());
         }
     }
