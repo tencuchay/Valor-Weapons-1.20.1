@@ -5,9 +5,12 @@ import com.valor.weapons.ValorWeapons;
 import com.valor.weapons.entity.LightningStrikeEntity;
 import com.valor.weapons.entity.ThunderBoltProjectile;
 import com.valor.weapons.item.ThunderLordFistItem;
+import com.valor.weapons.network.ModNetwork;
+import com.valor.weapons.network.PlayAnimationMessage;
 import com.valor.weapons.util.ValorDamage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -22,6 +25,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +46,12 @@ import java.util.UUID;
  */
 @Mod.EventBusSubscriber(modid = ValorWeapons.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class FistCombat {
+    /** Played on the player when the Lightning Strike comes from Thunderstep (Better Combat attack animation #2). */
+    private static final ResourceLocation THUNDERSTEP_STRIKE_ANIMATION =
+            new ResourceLocation(ValorWeapons.MODID, "thunderlord_projectile_2");
+
+    private enum SwingKind { NORMAL, SEVENTH, EMPOWERED }
+
     /** Normal attacks before the skill: the 7th attack unleashes the lightning. */
     public static final int HITS_BEFORE_SKILL = 6;
     /** Lightning skill layout: strikes in a straight line along the look direction. */
@@ -118,9 +128,10 @@ public final class FistCombat {
         // Keep the cadence anchored to when the swing STARTED, not when it landed.
         s.lastAttackTick = s.pendingTick >= 0 ? s.pendingTick : now - (swingWaitTicks(player) - 1);
 
-        s.meleeSkillSwing = countSwing(s, now);
+        SwingKind kind = countSwing(s, now);
+        s.meleeSkillSwing = kind != SwingKind.NORMAL;
         if (s.meleeSkillSwing) {
-            castLightning(player);
+            castLightning(player, kind == SwingKind.EMPOWERED);
         }
         return s.meleeSkillSwing;
     }
@@ -129,7 +140,7 @@ public final class FistCombat {
      * @return true when this swing must cast the Lightning Strike: it is the 7th swing (counter resets),
      *         or the player earned a Lightning Strike from Thunderstep (consumed here).
      */
-    private static boolean countSwing(State s, long now) {
+    private static SwingKind countSwing(State s, long now) {
         boolean seventh = ++s.swingCount > HITS_BEFORE_SKILL;
         if (seventh) {
             s.swingCount = 0;
@@ -138,7 +149,7 @@ public final class FistCombat {
         if (empowered) {
             s.empoweredUntil = -1;
         }
-        return seventh || empowered;
+        return empowered ? SwingKind.EMPOWERED : seventh ? SwingKind.SEVENTH : SwingKind.NORMAL;
     }
 
     /** Thunderstep ended: the player's next attack becomes a Lightning Strike. */
@@ -173,8 +184,9 @@ public final class FistCombat {
 
         s.lastAttackTick = swingTick;
 
-        if (countSwing(s, now)) {
-            castLightning(player); // 7th swing: lightning instead of the bolt
+        SwingKind kind = countSwing(s, now);
+        if (kind != SwingKind.NORMAL) {
+            castLightning(player, kind == SwingKind.EMPOWERED); // lightning instead of the bolt
             return;
         }
 
@@ -192,6 +204,13 @@ public final class FistCombat {
 
     /** 3 lightning strikes in a straight line along the (horizontal) look direction, one after another. */
     public static void castLightning(ServerPlayer player) {
+        castLightning(player, false);
+    }
+
+    /**
+     * @param fromThunderstep true when the strike was earned by Thunderstep: the caster also plays attack animation #2
+     */
+    public static void castLightning(ServerPlayer player, boolean fromThunderstep) {
         ServerLevel level = player.serverLevel();
         Vec3 dir = Vec3.directionFromRotation(0.0F, player.getYRot()); // horizontal, unit length
         float damage = ValorDamage.skillDamage(player);
@@ -207,6 +226,11 @@ public final class FistCombat {
             double y = groundY(level, x, player.getY(), z);
             int delay = FIRST_STRIKE_DELAY + i * STRIKE_INTERVAL;
             level.addFreshEntity(new LightningStrikeEntity(level, player, x, y, z, dir.x, dir.z, damage, heal, delay, healToken));
+        }
+
+        if (fromThunderstep) {
+            ModNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+                    new PlayAnimationMessage(player.getId(), THUNDERSTEP_STRIKE_ANIMATION));
         }
     }
 

@@ -14,5 +14,20 @@
 	"message.valor_weapons.thunderstep.need_xp": "Cần %s cấp kinh nghiệm để nâng cấp Thiên Lôi Bộ",
 	"message.valor_weapons.thunderstep.max": "Thiên Lôi Bộ đã đạt cấp tối đa",
 	"message.valor_weapons.thunderstep.empowered": "Thiên Lôi Bộ: đòn đánh tiếp theo sẽ giáng sấm sét",
-	"message.valor_weapons.thunderstep.locked": "Thiên Lôi Bộ chưa được học: bấm %s để nâng cấp"
+	"message.valor_weapons.thunderstep.locked": "Thiên Lôi Bộ chưa được học: bấm %s để nâng cấp",
+	"skill.valor_weapons.thunderstep.name": "Thiên Lôi Bộ",
+	"screen.valor_weapons.thunderstep.slot": "Kỹ năng chủ động",
+	"screen.valor_weapons.thunderstep.level": "Cấp %s / %s",
+	"screen.valor_weapons.thunderstep.damage": "Sát thương: %s + %s Công Phép",
+	"screen.valor_weapons.thunderstep.shield": "Lá chắn: %s + %s Máu tối đa trong %s giây",
+	"screen.valor_weapons.thunderstep.cooldown": "Hồi chiêu: %s giây",
+	"screen.valor_weapons.thunderstep.distance": "Khoảng cách lướt: %s block",
+	"screen.valor_weapons.thunderstep.special_title": "Kỹ năng đặc biệt - Thiên Lôi Bộ",
+	"screen.valor_weapons.thunderstep.special_text": "Lướt theo hướng phím di chuyển (không bấm phím nào = lướt thẳng), gây sát thương phép 1 lần lên mọi kẻ địch trên đường và nhận lá chắn. Sau khi lướt, đòn đánh tiếp theo sẽ giáng một đòn Lightning Strike.",
+	"screen.valor_weapons.thunderstep.next": "Cấp tiếp theo:",
+	"screen.valor_weapons.thunderstep.next_damage": "Sát thương: %s -> %s",
+	"screen.valor_weapons.thunderstep.next_shield": "Lá chắn: %s -> %s",
+	"screen.valor_weapons.thunderstep.maxed": "Đã đạt cấp tối đa",
+	"screen.valor_weapons.thunderstep.cost": "Chi phí nâng cấp: %s cấp kinh nghiệm",
+	"screen.valor_weapons.thunderstep.upgrade": "Nâng cấp"
 }

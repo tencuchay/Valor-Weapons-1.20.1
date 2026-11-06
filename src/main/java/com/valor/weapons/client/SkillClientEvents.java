@@ -35,7 +35,7 @@ public final class SkillClientEvents {
         }
         while (ModKeys.THUNDERSTEP_UPGRADE.consumeClick()) {
             if (canUse) {
-                ModNetwork.CHANNEL.sendToServer(new SkillActionMessage(SkillActionMessage.UPGRADE));
+                mc.setScreen(new SkillUpgradeScreen()); // the Upgrade button inside sends the request
             }
         }
     }

@@ -5,7 +5,7 @@ public final class ClientSkillData {
     /** Counts client ticks; the cooldown is measured against it. */
     public static long clientTicks = 0;
 
-    public static int level = 0;
+    public static int level = 1;
     private static long cooldownEndTick = 0;
     private static int cooldownTotal = 1;
 

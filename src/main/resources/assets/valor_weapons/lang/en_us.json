@@ -14,5 +14,20 @@
 	"message.valor_weapons.thunderstep.need_xp": "You need %s experience levels to upgrade Thunderstep",
 	"message.valor_weapons.thunderstep.max": "Thunderstep is already at max level",
 	"message.valor_weapons.thunderstep.empowered": "Thunderstep: your next attack is a Lightning Strike",
-	"message.valor_weapons.thunderstep.locked": "Thunderstep is not learned yet: press %s to upgrade it"
+	"message.valor_weapons.thunderstep.locked": "Thunderstep is not learned yet: press %s to upgrade it",
+	"skill.valor_weapons.thunderstep.name": "Thunderstep",
+	"screen.valor_weapons.thunderstep.slot": "Active skill",
+	"screen.valor_weapons.thunderstep.level": "Level %s / %s",
+	"screen.valor_weapons.thunderstep.damage": "Damage: %s + %s of Magic Damage",
+	"screen.valor_weapons.thunderstep.shield": "Shield: %s + %s of Max Health for %ss",
+	"screen.valor_weapons.thunderstep.cooldown": "Cooldown: %ss",
+	"screen.valor_weapons.thunderstep.distance": "Dash distance: %s blocks",
+	"screen.valor_weapons.thunderstep.special_title": "Unique Skill - Thunderstep",
+	"screen.valor_weapons.thunderstep.special_text": "Dash in the direction you are moving (no key held = forward), dealing magic damage once to every enemy on the way and gaining a shield. After the dash, your next attack calls down a Lightning Strike.",
+	"screen.valor_weapons.thunderstep.next": "Next level:",
+	"screen.valor_weapons.thunderstep.next_damage": "Damage: %s -> %s",
+	"screen.valor_weapons.thunderstep.next_shield": "Shield: %s -> %s",
+	"screen.valor_weapons.thunderstep.maxed": "Maximum level reached",
+	"screen.valor_weapons.thunderstep.cost": "Upgrade cost: %s experience levels",
+	"screen.valor_weapons.thunderstep.upgrade": "Upgrade"
 }

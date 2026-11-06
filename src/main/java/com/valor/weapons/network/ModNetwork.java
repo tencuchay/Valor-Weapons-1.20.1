@@ -6,7 +6,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class ModNetwork {
-    private static final String PROTOCOL = "3";
+    private static final String PROTOCOL = "4";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(ValorWeapons.MODID, "main"),
@@ -21,5 +21,7 @@ public final class ModNetwork {
                 SkillActionMessage::encode, SkillActionMessage::decode, SkillActionMessage::handle);
         CHANNEL.registerMessage(2, SkillSyncMessage.class,
                 SkillSyncMessage::encode, SkillSyncMessage::decode, SkillSyncMessage::handle);
+        CHANNEL.registerMessage(3, PlayAnimationMessage.class,
+                PlayAnimationMessage::encode, PlayAnimationMessage::decode, PlayAnimationMessage::handle);
     }
 }

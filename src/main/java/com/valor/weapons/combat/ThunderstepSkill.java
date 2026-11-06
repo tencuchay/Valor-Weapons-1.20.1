@@ -44,12 +44,12 @@ import java.util.UUID;
  * - Shield for 2 seconds: flat amount (by level) + 4% of max health, as a temporary modifier on valor_items:shield
  *   (falls back to vanilla absorption hearts if that attribute does not exist).
  * - When the dash ends the player's NEXT attack (within 5 s) is a Lightning Strike (see FistCombat).
- * - 9 second cooldown. Levels 1..6, each upgrade costs 10 experience levels.
+ * - 9 second cooldown. Levels 1..6 (start at 1), each upgrade costs 10 experience levels; upgrade screen opened with the upgrade key.
  */
 @Mod.EventBusSubscriber(modid = ValorWeapons.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class ThunderstepSkill {
-    /** Level 0 = not learned yet (the "unupgraded" frame); levels 1..6 are the six upgrades. */
-    public static final int STARTING_LEVEL = 0;
+    /** Every player starts at level 1. */
+    public static final int STARTING_LEVEL = 1;
     public static final int MAX_LEVEL = 6;
     public static final int COOLDOWN_TICKS = 9 * 20;
     public static final int UPGRADE_COST_LEVELS = 10;
@@ -57,14 +57,14 @@ public final class ThunderstepSkill {
     /** Flat part of the damage / shield for level 1..6. */
     private static final double[] DAMAGE = {2.5D, 3.0D, 3.5D, 4.0D, 4.5D, 5.0D};
     private static final double[] SHIELD = {2.0D, 3.0D, 3.5D, 4.0D, 4.5D, 5.0D};
-    private static final double MAGIC_DAMAGE_SCALE = 0.30D;
-    private static final double SHIELD_MAX_HEALTH_FRACTION = 0.04D;
+    public static final double MAGIC_DAMAGE_SCALE = 0.30D;
+    public static final double SHIELD_MAX_HEALTH_FRACTION = 0.04D;
 
-    private static final double DASH_DISTANCE = 4.0D;
+    public static final double DASH_DISTANCE = 4.0D;
     private static final int DASH_TICKS = 5;
     /** Blocks per tick while dashing. */
     private static final double DASH_SPEED = DASH_DISTANCE / DASH_TICKS;
-    private static final int SHIELD_TICKS = 2 * 20;
+    public static final int SHIELD_TICKS = 2 * 20;
 
     public static final ResourceLocation SHIELD_ATTRIBUTE_ID = new ResourceLocation("valor_items", "shield");
     private static final UUID SHIELD_MODIFIER_UUID = UUID.fromString("c6b2f1a4-8d3e-4e57-b9a1-3f0d7a52e8c4");
@@ -102,13 +102,23 @@ public final class ThunderstepSkill {
 
     // ---------------------------------------------------------------- level
 
+    /** Flat damage part at the given level (1..MAX_LEVEL). Used by the upgrade screen. */
+    public static double damageAtLevel(int level) {
+        return DAMAGE[Mth.clamp(level, 1, MAX_LEVEL) - 1];
+    }
+
+    /** Flat shield part at the given level (1..MAX_LEVEL). Used by the upgrade screen. */
+    public static double shieldAtLevel(int level) {
+        return SHIELD[Mth.clamp(level, 1, MAX_LEVEL) - 1];
+    }
+
     public static int getLevel(ServerPlayer player) {
         CompoundTag data = player.getPersistentData();
-        return data.contains(NBT_LEVEL) ? Mth.clamp(data.getInt(NBT_LEVEL), 0, MAX_LEVEL) : STARTING_LEVEL;
+        return data.contains(NBT_LEVEL) ? Mth.clamp(data.getInt(NBT_LEVEL), 1, MAX_LEVEL) : STARTING_LEVEL;
     }
 
     private static void setLevel(ServerPlayer player, int level) {
-        player.getPersistentData().putInt(NBT_LEVEL, Mth.clamp(level, 0, MAX_LEVEL));
+        player.getPersistentData().putInt(NBT_LEVEL, Mth.clamp(level, 1, MAX_LEVEL));
     }
 
     private static boolean holdingFist(ServerPlayer player) {
@@ -155,11 +165,6 @@ public final class ThunderstepSkill {
             return;
         }
         int level = getLevel(player);
-        if (level < 1) {
-            player.displayClientMessage(Component.translatable("message.valor_weapons.thunderstep.locked",
-                    Component.keybind("key.valor_weapons.thunderstep_upgrade")), true);
-            return;
-        }
         long now = player.level().getGameTime();
         if (COOLDOWN_END.getOrDefault(player.getUUID(), 0L) > now) {
             return;
