@@ -147,6 +147,15 @@ public final class ThunderstepSkill {
         sync(player);
     }
 
+    /** Resets passive marks back to 0 (e.g. after landing an empowered attack). */
+    public static void resetStacks(ServerPlayer player) {
+        PassiveState p = passive(player);
+        p.stacks = 0;
+        p.hasFreeCast = false;
+        p.savedCooldownRemaining = 0;
+        sync(player);
+    }
+
     private ThunderstepSkill() {}
 
     // ---------------------------------------------------------------- level

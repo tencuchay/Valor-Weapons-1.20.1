@@ -51,10 +51,6 @@ public final class FistCombat {
     private static final ResourceLocation THUNDERSTEP_STRIKE_ANIMATION =
             new ResourceLocation(ValorWeapons.MODID, "thunderlord_projectile_2");
 
-    private enum SwingKind { NORMAL, SEVENTH, EMPOWERED }
-
-    /** Normal attacks before the skill: the 7th attack unleashes the lightning. */
-    public static final int HITS_BEFORE_SKILL = 6;
     /** Lightning skill layout: strikes in a straight line along the look direction. */
     private static final int STRIKE_COUNT = 3;
     /** Strikes land 3, 6 and 9 blocks in front of the player (the 4x4 squares overlap by 1 block). */
@@ -62,8 +58,8 @@ public final class FistCombat {
     /** Distance between strike centres. */
     private static final double STRIKE_SPACING = 4.0D;
     /** Ticks before the first strike, and between strikes. */
-    /** After Thunderstep, the next attack within this many ticks is a Lightning Strike. */
-    private static final int EMPOWER_TICKS = 5 * 20;
+    /** After Thunderstep, the next attack within this many ticks is a Lightning Strike (6 seconds). */
+    private static final int EMPOWER_TICKS = 6 * 20;
     private static final int FIRST_STRIKE_DELAY = 2;
     private static final int STRIKE_INTERVAL = 5;
 
@@ -77,7 +73,6 @@ public final class FistCombat {
         long lastBlockClickTick = -1000;
         boolean meleeSkillSwing = false;
         long empoweredUntil = -1; // Thunderstep: the next attack before this tick is a Lightning Strike
-        int swingCount = 0;
     }
 
     private FistCombat() {}
@@ -131,10 +126,11 @@ public final class FistCombat {
         s.lastAttackTick = s.pendingTick >= 0 ? s.pendingTick : now - (swingWaitTicks(player) - 1);
         s.pendingTick = -1;
 
-        SwingKind kind = countSwing(s, now);
-        s.meleeSkillSwing = kind != SwingKind.NORMAL;
-        if (s.meleeSkillSwing) {
-            castLightning(player, kind == SwingKind.EMPOWERED);
+        boolean empowered = consumeEmpowered(s, now);
+        s.meleeSkillSwing = empowered;
+        if (empowered) {
+            castLightning(player, true);
+            ThunderstepSkill.resetStacks(player);
         } else {
             float damage = ValorDamage.thunderFistDamage(player);
             if (damage > 0.0F) {
@@ -145,19 +141,14 @@ public final class FistCombat {
     }
 
     /**
-     * @return true when this swing must cast the Lightning Strike: it is the 7th swing (counter resets),
-     *         or the player earned a Lightning Strike from Thunderstep (consumed here).
+     * @return true when this attack is empowered by Thunderstep (consumed here).
      */
-    private static SwingKind countSwing(State s, long now) {
-        boolean seventh = ++s.swingCount > HITS_BEFORE_SKILL;
-        if (seventh) {
-            s.swingCount = 0;
-        }
-        boolean empowered = s.empoweredUntil > now;
-        if (empowered) {
+    private static boolean consumeEmpowered(State s, long now) {
+        if (s.empoweredUntil > now) {
             s.empoweredUntil = -1;
+            return true;
         }
-        return empowered ? SwingKind.EMPOWERED : seventh ? SwingKind.SEVENTH : SwingKind.NORMAL;
+        return false;
     }
 
     /** Thunderstep ended: the player's next attack becomes a Lightning Strike. */
@@ -192,9 +183,9 @@ public final class FistCombat {
 
         s.lastAttackTick = swingTick;
 
-        SwingKind kind = countSwing(s, now);
-        if (kind != SwingKind.NORMAL) {
-            castLightning(player, kind == SwingKind.EMPOWERED); // lightning instead of the bolt
+        if (consumeEmpowered(s, now)) {
+            castLightning(player, true);
+            ThunderstepSkill.resetStacks(player);
             return;
         }
 

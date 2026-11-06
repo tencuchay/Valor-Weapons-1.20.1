@@ -49,4 +49,15 @@ public final class ClientEvents {
     public static void onRegisterGuiOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAboveAll("thunderstep", SkillHud.OVERLAY);
     }
+
+    @SubscribeEvent
+    public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
+        var inHandRenderer = event.getContext().getItemInHandRenderer();
+        for (String skin : event.getSkins()) {
+            net.minecraft.client.renderer.entity.player.PlayerRenderer renderer = event.getSkin(skin);
+            if (renderer != null) {
+                renderer.addLayer(new OffhandFistLayer(renderer, inHandRenderer));
+            }
+        }
+    }
 }

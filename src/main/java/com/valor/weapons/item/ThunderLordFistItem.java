@@ -125,9 +125,5 @@ public class ThunderLordFistItem extends SwordItem {
                 .withStyle(ChatFormatting.AQUA));
         tooltip.add(Component.translatable("tooltip.valor_weapons.thunder_lord_fist.melee").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.valor_weapons.thunder_lord_fist.ranged").withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("tooltip.valor_weapons.thunder_lord_fist.skill",
-                FistCombat.HITS_BEFORE_SKILL + 1,
-                ValorDamage.percent(ValorDamage.SKILL_PHYSICAL_SCALE), ValorDamage.percent(ValorDamage.SKILL_MAGIC_SCALE),
-                ValorDamage.percent(ValorDamage.SKILL_HEAL_FRACTION)).withStyle(ChatFormatting.YELLOW));
     }
 }

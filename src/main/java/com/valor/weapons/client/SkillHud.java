@@ -29,6 +29,7 @@ public final class SkillHud {
     // Ready for ultimate skills later: unupgraded_ultimate_skill_frame, 1_upgraded_ultimate_skill_frame,
     // 2_upgraded_ultimate_skill_frame, fully_upgraded_ultimate_skill_frame
     private static final ResourceLocation ICON = tex("thunderstep_icon");
+    private static final ResourceLocation FREE_ICON = tex("thunderstep_free_icon");
 
     private static final int FRAME_SIZE = 32;
     private static final int ICON_SIZE = 16;
@@ -70,17 +71,12 @@ public final class SkillHud {
         RenderSystem.enableBlend();
         int level = Math.max(1, Math.min(ClientSkillData.level, ThunderstepSkill.MAX_LEVEL));
         g.blit(frameTexture(level), x, y, 0, 0, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE);
-        g.blit(ICON, iconX, iconY, 0, 0, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
+
+        ResourceLocation currentIcon = ClientSkillData.hasFreeCast ? FREE_ICON : ICON;
+        g.blit(currentIcon, iconX, iconY, 0, 0, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
 
         // Passive stacks & Free cast indicator
-        if (ClientSkillData.hasFreeCast) {
-            g.drawCenteredString(font, "⚡ FREE", x + FRAME_SIZE / 2, y - 10, 0xFFFF55);
-            // Golden highlight border when free cast is available
-            g.fill(x - 1, y - 1, x + FRAME_SIZE + 1, y, 0xFFF5B83D);
-            g.fill(x - 1, y + FRAME_SIZE, x + FRAME_SIZE + 1, y + FRAME_SIZE + 1, 0xFFF5B83D);
-            g.fill(x - 1, y, x, y + FRAME_SIZE, 0xFFF5B83D);
-            g.fill(x + FRAME_SIZE, y, x + FRAME_SIZE + 1, y + FRAME_SIZE, 0xFFF5B83D);
-        } else {
+        if (!ClientSkillData.hasFreeCast) {
             if (ClientSkillData.stacks > 0) {
                 g.drawCenteredString(font, "⚡ " + ClientSkillData.stacks + "/6", x + FRAME_SIZE / 2, y - 10, 0x55FFFF);
             }
