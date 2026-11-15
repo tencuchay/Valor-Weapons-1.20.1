@@ -30,5 +30,10 @@
 	"screen.valor_weapons.thunderstep.next_shield": "Shield: %s -> %s",
 	"screen.valor_weapons.thunderstep.maxed": "Maximum level reached",
 	"screen.valor_weapons.thunderstep.cost": "Upgrade cost: %s experience levels",
-	"screen.valor_weapons.thunderstep.upgrade": "Upgrade"
+	"screen.valor_weapons.thunderstep.upgrade": "Upgrade",
+	"item.valor_weapons.sun_bow": "Sun's Bow",
+	"entity.valor_weapons.sun_bolt": "Sun Bolt",
+	"tooltip.valor_weapons.sun_bow.scaling": "Bolt damage: %s of Attack Damage",
+	"tooltip.valor_weapons.sun_bow.ranged": "Every attack fires a sun bolt up to %s blocks",
+	"attribute.name.valor_weapons.thunder_stacks": "Thunder Stacks"
 }

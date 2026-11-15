@@ -1,6 +1,7 @@
 package com.valor.weapons;
 
 import com.valor.weapons.network.ModNetwork;
+import com.valor.weapons.registry.ModAttributes;
 import com.valor.weapons.registry.ModCreativeTabs;
 import com.valor.weapons.registry.ModEntities;
 import com.valor.weapons.registry.ModItems;
@@ -21,6 +22,7 @@ public class ValorWeapons {
     public ValorWeapons() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        ModAttributes.ATTRIBUTES.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModEntities.ENTITIES.register(modBus);
         ModParticles.PARTICLES.register(modBus);

@@ -30,5 +30,10 @@
 	"screen.valor_weapons.thunderstep.next_shield": "Lá chắn: %s -> %s",
 	"screen.valor_weapons.thunderstep.maxed": "Đã đạt cấp tối đa",
 	"screen.valor_weapons.thunderstep.cost": "Chi phí nâng cấp: %s cấp kinh nghiệm",
-	"screen.valor_weapons.thunderstep.upgrade": "Nâng cấp"
+	"screen.valor_weapons.thunderstep.upgrade": "Nâng cấp",
+	"item.valor_weapons.sun_bow": "Cung Mặt Trời",
+	"entity.valor_weapons.sun_bolt": "Tia Nắng",
+	"tooltip.valor_weapons.sun_bow.scaling": "Sát thương tên: %s Sát Thương Tấn Công",
+	"tooltip.valor_weapons.sun_bow.ranged": "Mỗi đòn đánh bắn một tia nắng xa tối đa %s block",
+	"attribute.name.valor_weapons.thunder_stacks": "Dấu Sấm"
 }

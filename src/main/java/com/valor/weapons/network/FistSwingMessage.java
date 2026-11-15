@@ -1,6 +1,7 @@
 package com.valor.weapons.network;
 
 import com.valor.weapons.combat.FistCombat;
+import com.valor.weapons.combat.SunBowCombat;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -22,6 +23,7 @@ public class FistSwingMessage {
             ServerPlayer player = ctx.getSender();
             if (player != null) {
                 FistCombat.requestBolt(player);
+                SunBowCombat.requestShot(player);
             }
         });
         ctx.setPacketHandled(true);

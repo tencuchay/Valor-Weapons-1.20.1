@@ -17,6 +17,7 @@ public final class ModCreativeTabs {
                     .icon(() -> new ItemStack(ModItems.THUNDER_LORD_FIST.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.THUNDER_LORD_FIST.get());
+                        output.accept(ModItems.SUN_BOW.get());
                         // Add future weapons here.
                     })
                     .build());

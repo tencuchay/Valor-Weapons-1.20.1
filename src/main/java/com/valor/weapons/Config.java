@@ -33,6 +33,21 @@ public class Config {
                     "Raise it if the bolt appears before the fist lands, lower it if it appears after.")
             .defineInRange("thunderLordFist.swingDelayFraction", 0.25D, 0.0D, 1.0D);
 
+    // ---- Sun's Bow
+
+    public static final ForgeConfigSpec.DoubleValue SUN_BOW_PROJECTILE_SPEED = BUILDER
+            .comment("Sun's Bow: projectile speed in blocks per tick")
+            .defineInRange("sunBow.projectileSpeed", 1.6D, 0.2D, 4.0D);
+
+    public static final ForgeConfigSpec.DoubleValue SUN_BOW_RANGE = BUILDER
+            .comment("Sun's Bow: blocks the projectile flies before it disappears")
+            .defineInRange("sunBow.projectileRange", 12.0D, 1.0D, 64.0D);
+
+    public static final ForgeConfigSpec.DoubleValue SUN_BOW_SWING_DELAY_FRACTION = BUILDER
+            .comment("Sun's Bow: how long after the swing starts the bolt is released, as a fraction of the attack cooldown.",
+                    "Match it to Better Combat's wind-up (upswing) of the bow's animation.")
+            .defineInRange("sunBow.swingDelayFraction", 0.25D, 0.0D, 1.0D);
+
     public static final ForgeConfigSpec SPEC = BUILDER.build();
 
     private Config() {}

@@ -30,7 +30,8 @@ public final class ClientInputHandler {
                 && mc.screen == null
                 && mc.mouseHandler.isMouseGrabbed()
                 && mc.options.keyAttack.isDown()
-                && player.getMainHandItem().getItem() instanceof ThunderLordFistItem;
+                && (player.getMainHandItem().getItem() instanceof ThunderLordFistItem
+                        || player.getMainHandItem().getItem() instanceof com.valor.weapons.item.SunBowItem);
 
         // Every tick while held, so a swing is picked up on the exact tick it becomes possible.
         // The server decides whether it counts (attack-speed cooldown), so this cannot be used to fire faster.

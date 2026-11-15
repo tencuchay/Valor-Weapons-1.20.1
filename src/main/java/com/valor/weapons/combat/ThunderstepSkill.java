@@ -4,6 +4,7 @@ import com.valor.weapons.ValorWeapons;
 import com.valor.weapons.item.ThunderLordFistItem;
 import com.valor.weapons.network.ModNetwork;
 import com.valor.weapons.network.SkillSyncMessage;
+import com.valor.weapons.registry.ModAttributes;
 import com.valor.weapons.registry.ModParticles;
 import com.valor.weapons.util.Targeting;
 import com.valor.weapons.util.ValorDamage;
@@ -373,6 +374,11 @@ public final class ThunderstepSkill {
             remaining = 0; // ready on client
         } else {
             remaining = (int) Math.max(0L, COOLDOWN_END.getOrDefault(player.getUUID(), 0L) - now);
+        }
+        // valor_weapons:thunder_stacks (syncable player attribute) mirrors the passive stacks for other mods.
+        AttributeInstance stacksAttr = player.getAttribute(ModAttributes.THUNDER_STACKS.get());
+        if (stacksAttr != null && stacksAttr.getBaseValue() != p.stacks) {
+            stacksAttr.setBaseValue(p.stacks);
         }
         ModNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
                 new SkillSyncMessage(getLevel(player), remaining, COOLDOWN_TICKS, p.stacks, p.hasFreeCast));

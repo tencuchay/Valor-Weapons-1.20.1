@@ -26,12 +26,14 @@ public final class ClientEvents {
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.THUNDER_BOLT.get(), ThunderBoltRenderer::new);
         event.registerEntityRenderer(ModEntities.LIGHTNING_STRIKE.get(), LightningStrikeRenderer::new);
+        event.registerEntityRenderer(ModEntities.SUN_BOLT.get(), SunBoltRenderer::new);
     }
 
     /** The projectile model is not attached to any item, so ask the game to load and bake it anyway. */
     @SubscribeEvent
     public static void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event) {
         event.register(ThunderBoltRenderer.MODEL);
+        event.register(SunBoltRenderer.MODEL);
     }
 
     @SubscribeEvent
