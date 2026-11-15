@@ -27,6 +27,7 @@ public final class ClientEvents {
         event.registerEntityRenderer(ModEntities.THUNDER_BOLT.get(), ThunderBoltRenderer::new);
         event.registerEntityRenderer(ModEntities.LIGHTNING_STRIKE.get(), LightningStrikeRenderer::new);
         event.registerEntityRenderer(ModEntities.SUN_BOLT.get(), SunBoltRenderer::new);
+        event.registerEntityRenderer(ModEntities.SUN_ARROW.get(), SunArrowRenderer::new);
     }
 
     /** The projectile model is not attached to any item, so ask the game to load and bake it anyway. */
@@ -34,6 +35,7 @@ public final class ClientEvents {
     public static void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event) {
         event.register(ThunderBoltRenderer.MODEL);
         event.register(SunBoltRenderer.MODEL);
+        event.register(SunArrowRenderer.MODEL);
     }
 
     @SubscribeEvent
@@ -50,6 +52,7 @@ public final class ClientEvents {
     @SubscribeEvent
     public static void onRegisterGuiOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAboveAll("thunderstep", SkillHud.OVERLAY);
+        event.registerAboveAll("infinite_arrow_stacks", ArrowStackHud.OVERLAY);
     }
 
     @SubscribeEvent

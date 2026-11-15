@@ -35,5 +35,10 @@
 	"entity.valor_weapons.sun_bolt": "Sun Bolt",
 	"tooltip.valor_weapons.sun_bow.scaling": "Bolt damage: %s of Attack Damage",
 	"tooltip.valor_weapons.sun_bow.ranged": "Every attack fires a sun bolt up to %s blocks",
-	"attribute.name.valor_weapons.thunder_stacks": "Thunder Stacks"
+	"attribute.name.valor_weapons.thunder_stacks": "Thunder Stacks",
+	"death.attack.valor_weapons.sun_arrow": "%1$s was scorched by %2$s's sun arrows",
+	"death.attack.valor_weapons.sun_arrow.item": "%1$s was scorched by %2$s's sun arrows using %3$s",
+	"entity.valor_weapons.sun_arrow": "Sun Arrow",
+	"tooltip.valor_weapons.sun_bow.stacks": "Every attack gives an Infinite Arrow stack. After %s stacks the next attack fires %s sun arrows instead",
+	"tooltip.valor_weapons.sun_bow.arrow": "The arrows hit everything on their path %s times (faster with higher Attack Speed): %s damage + %s%% of the target's max health (+%s%% per %s Attack) each"
 }

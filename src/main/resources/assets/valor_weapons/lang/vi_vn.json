@@ -35,5 +35,10 @@
 	"entity.valor_weapons.sun_bolt": "Tia Nắng",
 	"tooltip.valor_weapons.sun_bow.scaling": "Sát thương tên: %s Sát Thương Tấn Công",
 	"tooltip.valor_weapons.sun_bow.ranged": "Mỗi đòn đánh bắn một tia nắng xa tối đa %s block",
-	"attribute.name.valor_weapons.thunder_stacks": "Dấu Sấm"
+	"attribute.name.valor_weapons.thunder_stacks": "Dấu Sấm",
+	"death.attack.valor_weapons.sun_arrow": "%1$s bị thiêu cháy bởi mũi tên mặt trời của %2$s",
+	"death.attack.valor_weapons.sun_arrow.item": "%1$s bị thiêu cháy bởi mũi tên mặt trời của %2$s bằng %3$s",
+	"entity.valor_weapons.sun_arrow": "Mũi Tên Mặt Trời",
+	"tooltip.valor_weapons.sun_bow.stacks": "Mỗi đòn đánh được 1 stack Mũi Tên Vô Hạn. Đủ %s stack thì đòn kế tiếp bắn %s mũi tên mặt trời thay vì 1 tia nắng",
+	"tooltip.valor_weapons.sun_bow.arrow": "Các mũi tên gây sát thương %s lần lên mọi kẻ địch trên đường bay (nhanh hơn khi Tốc Đánh cao): %s sát thương + %s%% máu tối đa của mục tiêu (+%s%% mỗi %s Công) mỗi lần"
 }

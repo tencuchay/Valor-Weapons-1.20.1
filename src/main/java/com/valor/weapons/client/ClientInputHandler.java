@@ -30,6 +30,7 @@ public final class ClientInputHandler {
                 && mc.screen == null
                 && mc.mouseHandler.isMouseGrabbed()
                 && mc.options.keyAttack.isDown()
+                && !ClientSunBowData.lockActive // no normal attacks during the Infinite Arrow burst
                 && (player.getMainHandItem().getItem() instanceof ThunderLordFistItem
                         || player.getMainHandItem().getItem() instanceof com.valor.weapons.item.SunBowItem);
 

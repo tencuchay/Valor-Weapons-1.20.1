@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.valor.weapons.Config;
 import com.valor.weapons.combat.SunBowCombat;
+import com.valor.weapons.entity.SunArrowProjectile;
 import com.valor.weapons.util.SunBowDamage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -37,7 +38,7 @@ public class SunBowItem extends SwordItem {
      */
     private static final double WEAPON_ATTACK_DAMAGE = 29.0D;
     /** Wanted total attack speed. */
-    private static final double TOTAL_ATTACK_SPEED = 1.5D;
+    public static final double TOTAL_ATTACK_SPEED = 1.5D;
     /** The player's base attack speed is 4.0, so the modifier is (wanted - 4.0) = -2.5. */
     private static final double WEAPON_ATTACK_SPEED = TOTAL_ATTACK_SPEED - 4.0D;
 
@@ -85,6 +86,14 @@ public class SunBowItem extends SwordItem {
                 percent(SunBowDamage.SCALE)).withStyle(ChatFormatting.GOLD));
         tooltip.add(Component.translatable("tooltip.valor_weapons.sun_bow.ranged",
                 Math.round(Config.SUN_BOW_RANGE.get())).withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.valor_weapons.sun_bow.stacks",
+                SunBowCombat.STACKS_NEEDED, SunBowCombat.BURST_ARROWS).withStyle(ChatFormatting.YELLOW));
+        tooltip.add(Component.translatable("tooltip.valor_weapons.sun_bow.arrow",
+                SunBowCombat.BURST_HITS,
+                Math.round(SunArrowProjectile.FLAT_DAMAGE),
+                Math.round(SunArrowProjectile.BASE_HEALTH_PERCENT * 1000.0D) / 10.0D,
+                Math.round(SunArrowProjectile.PERCENT_PER_STEP * 100.0D),
+                Math.round(SunArrowProjectile.ATTACK_PER_STEP)).withStyle(ChatFormatting.GOLD));
     }
 
     private static String percent(double scale) {

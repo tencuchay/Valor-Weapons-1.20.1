@@ -2,6 +2,7 @@ package com.valor.weapons.registry;
 
 import com.valor.weapons.ValorWeapons;
 import com.valor.weapons.entity.LightningStrikeEntity;
+import com.valor.weapons.entity.SunArrowProjectile;
 import com.valor.weapons.entity.SunBoltProjectile;
 import com.valor.weapons.entity.ThunderBoltProjectile;
 import net.minecraft.world.entity.EntityType;
@@ -42,6 +43,16 @@ public final class ModEntities {
                     .noSave()
                     .noSummon()
                     .build(ValorWeapons.MODID + ":sun_bolt"));
+
+    public static final RegistryObject<EntityType<SunArrowProjectile>> SUN_ARROW = ENTITIES.register("sun_arrow",
+            () -> EntityType.Builder.<SunArrowProjectile>of(SunArrowProjectile::new, MobCategory.MISC)
+                    .sized(0.3F, 0.3F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .noSave()
+                    .noSummon()
+                    .build(ValorWeapons.MODID + ":sun_arrow"));
 
     private ModEntities() {}
 }
