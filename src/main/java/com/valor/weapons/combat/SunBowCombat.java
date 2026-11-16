@@ -7,11 +7,13 @@ import com.valor.weapons.entity.SunBoltProjectile;
 import com.valor.weapons.item.SunBowItem;
 import com.valor.weapons.network.ArrowStackSyncMessage;
 import com.valor.weapons.network.ModNetwork;
+import com.valor.weapons.network.PlayAnimationMessage;
 import com.valor.weapons.network.SunBowLockMessage;
 import com.valor.weapons.util.SunBowDamage;
 import com.valor.weapons.util.Targeting;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -69,6 +71,13 @@ public final class SunBowCombat {
     private static final int ARROW_INTERVAL_TICKS = 1;
     /** Movement speed change while the burst is firing: -0.7 = 70% slower. */
     private static final double BURST_SPEED_MODIFIER = -0.7D;
+    /**
+     * Length (ticks) of the useful part of the burst animation: its last keyframe is at tick 71. The animation is played
+     * at the speed that makes this part last exactly as long as the burst (so it speeds up with the attack speed).
+     */
+    private static final double BURST_ANIMATION_TICKS = 71.0D;
+    /** Player animation of the burst (assets/valor_weapons/player_animation/infinite_arrow_animation.json). */
+    private static final ResourceLocation BURST_ANIMATION = new ResourceLocation(ValorWeapons.MODID, "infinite_arrow_animation");
     private static final UUID BURST_SLOW_UUID = UUID.fromString("5b3f1c9e-7a24-4d8b-9c61-2e0a8f4d7b13");
     /** Visual arrows start up to this far (blocks) from the muzzle, so they all leave from nearly one point... */
     private static final double START_SCATTER_RADIUS = 0.2D;
@@ -264,6 +273,9 @@ public final class SunBowCombat {
             s.pendingTick = -1;
             applySlow(player);
             sendLock(player, true);
+            // The burst is over at its last hit, i.e. (hits - 1) / hits of burstDuration after it started.
+            double burstLength = s.burstDuration * (s.burstTotalHits - 1) / s.burstTotalHits;
+            sendAnimation(player, BURST_ANIMATION, (float) (BURST_ANIMATION_TICKS / Math.max(1.0D, burstLength)));
             runBurst(player, s, now); // the first hit and the first arrow happen right away, the rest follow
             stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.MAINHAND));
             return;
@@ -281,6 +293,7 @@ public final class SunBowCombat {
         Vec3 look = player.getLookAngle();
         Vec3 start = muzzle(player, look);
         bolt.setPos(start.x, start.y, start.z);
+        bolt.setHitOrigin(player.getEyePosition());
         bolt.launch(look.scale(Config.SUN_BOW_PROJECTILE_SPEED.get()));
         level.addFreshEntity(bolt);
 
@@ -317,6 +330,13 @@ public final class SunBowCombat {
         s.arrowsRemaining = 0;
         removeSlow(player);
         sendLock(player, false);
+        sendAnimation(player, PlayAnimationMessage.STOP, 1.0F);
+    }
+
+    /** Plays (or, with PlayAnimationMessage.STOP, stops) a player animation for everyone who can see the player. */
+    private static void sendAnimation(ServerPlayer player, ResourceLocation animation, float speed) {
+        ModNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+                new PlayAnimationMessage(player.getId(), animation, speed));
     }
 
     private static void applySlow(ServerPlayer player) {

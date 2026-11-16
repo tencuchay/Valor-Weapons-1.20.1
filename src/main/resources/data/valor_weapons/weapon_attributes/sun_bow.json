@@ -4,14 +4,14 @@
 		"attack_range": 12.0,
 		"range_bonus": 0,
 		"two_handed": true,
-		"pose": "valor_weapons:pose_thunderlord_fist",
+		"pose": "valor_weapons:pose_sun_bow",
 		"category": "sun_bow",
 		"attacks": [
 			{
 				"hitbox": "FORWARD_BOX",
 				"damage_multiplier": 1.0,
 				"upswing": 0.5,
-				"animation": "valor_weapons:thunderlord_projectile_1",
+				"animation": "valor_weapons:sun_bow_pull_1",
 				"swing_sound": {
 					"id": "bettercombat:fist_punch",
 					"volume": 1.0,
@@ -22,18 +22,7 @@
 				"hitbox": "FORWARD_BOX",
 				"damage_multiplier": 1.0,
 				"upswing": 0.5,
-				"animation": "valor_weapons:thunderlord_projectile_2",
-				"swing_sound": {
-					"id": "bettercombat:fist_punch",
-					"volume": 1.0,
-					"pitch": 1.0
-				}
-			},
-			{
-				"hitbox": "FORWARD_BOX",
-				"damage_multiplier": 1.0,
-				"upswing": 0.5,
-				"animation": "valor_weapons:thunderlord_projectile_3",
+				"animation": "valor_weapons:sun_bow_pull_2",
 				"swing_sound": {
 					"id": "bettercombat:fist_punch",
 					"volume": 1.0,

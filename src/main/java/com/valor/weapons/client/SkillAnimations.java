@@ -2,6 +2,7 @@ package com.valor.weapons.client;
 
 import com.mojang.logging.LogUtils;
 import com.valor.weapons.ValorWeapons;
+import com.valor.weapons.network.PlayAnimationMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +12,9 @@ import org.slf4j.Logger;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * Plays a PlayerAnimator animation on a player (the library Better Combat is built on).
@@ -30,6 +33,9 @@ public final class SkillAnimations {
     private static final int LAYER_PRIORITY = 5000;
 
     private static final String PKG = "dev.kosmx.playerAnim.";
+
+    /** Ticks the animation fades out over when it is stopped. */
+    private static final int STOP_FADE_TICKS = 6;
 
     private static boolean registered = false;
     private static final Set<String> WARNED = new HashSet<>();
@@ -77,8 +83,16 @@ public final class SkillAnimations {
         }
     }
 
-    /** Plays the animation on the player with this entity id (called on the client thread). */
+    /** Plays the animation at its normal speed. */
     public static void play(int entityId, ResourceLocation animationId) {
+        play(entityId, animationId, 1.0F);
+    }
+
+    /**
+     * Plays the animation on the player with this entity id (called on the client thread). speed 1.0 is the speed the
+     * file was made for, 2.0 plays it twice as fast.
+     */
+    public static void play(int entityId, ResourceLocation animationId, float speed) {
         if (!registered) {
             return;
         }
@@ -88,6 +102,10 @@ public final class SkillAnimations {
         }
         Entity entity = mc.level.getEntity(entityId);
         if (!(entity instanceof AbstractClientPlayer player)) {
+            return;
+        }
+        if (PlayAnimationMessage.STOP.equals(animationId)) {
+            stop(player);
             return;
         }
         try {
@@ -109,9 +127,66 @@ public final class SkillAnimations {
 
             Object animation = Class.forName(PKG + "api.layered.KeyframeAnimationPlayer")
                     .getConstructor(Class.forName(PKG + "core.data.KeyframeAnimation")).newInstance(keyframes);
+            applySpeed(layer, speed);
             method(layer.getClass(), "setAnimation", 1).invoke(layer, animation);
         } catch (Throwable t) {
             warnOnce("play", "Could not play " + animationId + ": " + t);
+        }
+    }
+
+    /** One PlayerAnimator SpeedModifier per layer, created the first time a non-default speed is needed. */
+    private static final Map<Object, Object> SPEED_MODIFIERS = new WeakHashMap<>();
+
+    /**
+     * Sets the playback speed of whatever the layer plays next. Uses PlayerAnimator's SpeedModifier (through
+     * reflection, like everything here); when it is not available the animation just plays at its normal speed.
+     * Every play call sets the speed, so an animation that follows a sped-up one is back to normal.
+     */
+    private static void applySpeed(Object layer, float speed) {
+        try {
+            Object modifier = SPEED_MODIFIERS.get(layer);
+            if (modifier == null) {
+                if (Math.abs(speed - 1.0F) < 1.0E-3F) {
+                    return; // normal speed and no modifier yet: nothing to do
+                }
+                Class<?> type = Class.forName(PKG + "api.layered.modifier.SpeedModifier");
+                java.lang.reflect.Field field = type.getField("speed"); // checked first: the speed must be changeable later
+                if (field.getType() != float.class || java.lang.reflect.Modifier.isFinal(field.getModifiers())) {
+                    throw new NoSuchFieldException("speed is not a writable float");
+                }
+                modifier = type.getConstructor(float.class).newInstance(speed);
+                method(layer.getClass(), "addModifierLast", 1).invoke(layer, modifier);
+                SPEED_MODIFIERS.put(layer, modifier);
+                return;
+            }
+            modifier.getClass().getField("speed").setFloat(modifier, speed);
+        } catch (Throwable t) {
+            warnOnce("speed", "Animation speed is not available, playing at normal speed: " + t);
+        }
+    }
+
+    /** Stops the animation of our layer, fading out; a plain cut if the fade API is not there. */
+    private static void stop(AbstractClientPlayer player) {
+        try {
+            Object data = method(Class.forName(PKG + "minecraftApi.PlayerAnimationAccess"), "getPlayerAssociatedData", 1)
+                    .invoke(null, player);
+            Object layer = method(data.getClass(), "get", 1).invoke(data, LAYER_ID);
+            if (layer == null) {
+                return;
+            }
+            try {
+                Class<?> easeClass = Class.forName(PKG + "core.util.Ease");
+                @SuppressWarnings({"unchecked", "rawtypes"})
+                Object ease = Enum.valueOf((Class<? extends Enum>) easeClass.asSubclass(Enum.class), "INOUTSINE");
+                Object fade = Class.forName(PKG + "api.layered.modifier.AbstractFadeModifier")
+                        .getMethod("standardFadeIn", int.class, easeClass).invoke(null, STOP_FADE_TICKS, ease);
+                method(layer.getClass(), "replaceAnimationWithFade", 2).invoke(layer, fade, null);
+            } catch (Throwable fadeFailed) {
+                warnOnce("fade", "Fade-out is not available, cutting the animation instead: " + fadeFailed);
+                method(layer.getClass(), "setAnimation", 1).invoke(layer, new Object[]{null});
+            }
+        } catch (Throwable t) {
+            warnOnce("stop", "Could not stop the animation: " + t);
         }
     }
 
