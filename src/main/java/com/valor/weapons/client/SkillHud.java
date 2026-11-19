@@ -75,11 +75,7 @@ public final class SkillHud {
         ResourceLocation currentIcon = ClientSkillData.hasFreeCast ? FREE_ICON : ICON;
         g.blit(currentIcon, iconX, iconY, 0, 0, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
 
-        // Passive stacks & Free cast indicator
         if (!ClientSkillData.hasFreeCast) {
-            if (ClientSkillData.stacks > 0) {
-                g.drawCenteredString(font, "⚡ " + ClientSkillData.stacks + "/6", x + FRAME_SIZE / 2, y - 10, 0x55FFFF);
-            }
             // Cooldown: darkens the icon from the top, shrinking as the cooldown runs out.
             float fraction = ClientSkillData.remainingFraction(partialTick);
             if (fraction > 0.0F) {

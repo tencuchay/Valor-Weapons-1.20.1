@@ -130,7 +130,6 @@ public final class FistCombat {
         s.meleeSkillSwing = empowered;
         if (empowered) {
             castLightning(player, true);
-            ThunderstepSkill.resetStacks(player);
         } else {
             float damage = ValorDamage.thunderFistDamage(player);
             if (damage > 0.0F) {
@@ -185,7 +184,6 @@ public final class FistCombat {
 
         if (consumeEmpowered(s, now)) {
             castLightning(player, true);
-            ThunderstepSkill.resetStacks(player);
             return;
         }
 

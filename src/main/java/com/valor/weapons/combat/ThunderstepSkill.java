@@ -98,7 +98,6 @@ public final class ThunderstepSkill {
     private static final class PassiveState {
         int stacks = 0;
         boolean hasFreeCast = false;
-        long savedCooldownRemaining = 0;
         long lastStackTick = -1000;
     }
 
@@ -134,26 +133,10 @@ public final class ThunderstepSkill {
             p.stacks = MAX_PASSIVE_STACKS;
             p.hasFreeCast = true;
 
-            long cdEnd = COOLDOWN_END.getOrDefault(player.getUUID(), 0L);
-            if (cdEnd > now) {
-                p.savedCooldownRemaining = cdEnd - now;
-            } else {
-                p.savedCooldownRemaining = 0;
-            }
-
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.5F, 1.8F);
             player.displayClientMessage(Component.translatable("message.valor_weapons.thunderstep.free_ready"), true);
         }
-        sync(player);
-    }
-
-    /** Resets passive marks back to 0 (e.g. after landing an empowered attack). */
-    public static void resetStacks(ServerPlayer player) {
-        PassiveState p = passive(player);
-        p.stacks = 0;
-        p.hasFreeCast = false;
-        p.savedCooldownRemaining = 0;
         sync(player);
     }
 
@@ -236,12 +219,6 @@ public final class ThunderstepSkill {
         } else {
             p.hasFreeCast = false;
             p.stacks = 0;
-            if (p.savedCooldownRemaining > 0) {
-                COOLDOWN_END.put(player.getUUID(), now + p.savedCooldownRemaining);
-                p.savedCooldownRemaining = 0;
-            } else {
-                COOLDOWN_END.put(player.getUUID(), 0L);
-            }
         }
 
         double shield = SHIELD[level - 1] + player.getMaxHealth() * SHIELD_MAX_HEALTH_FRACTION;
@@ -369,12 +346,7 @@ public final class ThunderstepSkill {
     public static void sync(ServerPlayer player) {
         long now = player.level().getGameTime();
         PassiveState p = passive(player);
-        int remaining;
-        if (p.hasFreeCast) {
-            remaining = 0; // ready on client
-        } else {
-            remaining = (int) Math.max(0L, COOLDOWN_END.getOrDefault(player.getUUID(), 0L) - now);
-        }
+        int remaining = (int) Math.max(0L, COOLDOWN_END.getOrDefault(player.getUUID(), 0L) - now);
         // valor_weapons:thunder_stacks (syncable player attribute) mirrors the passive stacks for other mods.
         AttributeInstance stacksAttr = player.getAttribute(ModAttributes.THUNDER_STACKS.get());
         if (stacksAttr != null && stacksAttr.getBaseValue() != p.stacks) {
