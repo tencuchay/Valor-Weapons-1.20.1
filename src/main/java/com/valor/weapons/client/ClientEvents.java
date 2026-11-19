@@ -3,6 +3,10 @@ package com.valor.weapons.client;
 import com.valor.weapons.ValorWeapons;
 import com.valor.weapons.registry.ModEntities;
 import com.valor.weapons.registry.ModParticles;
+import net.minecraft.client.particle.AttackSweepParticle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
@@ -41,6 +45,14 @@ public final class ClientEvents {
     @SubscribeEvent
     public static void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ModParticles.LIGHTNING_HIT.get(), LightningHitParticle.Provider::new);
+
+        // The vanilla sweep particle, except next to a player holding Sun's Bow or Thunder Lord's Fist (no sweep for them).
+        event.registerSpriteSet(ParticleTypes.SWEEP_ATTACK, sprites -> {
+            ParticleProvider<SimpleParticleType> vanilla = new AttackSweepParticle.Provider(sprites);
+            return (type, level, x, y, z, xSpeed, ySpeed, zSpeed) -> SweepSuppression.nearWeaponHolder(x, y, z)
+                    ? null
+                    : vanilla.createParticle(type, level, x, y, z, xSpeed, ySpeed, zSpeed);
+        });
     }
 
     @SubscribeEvent
